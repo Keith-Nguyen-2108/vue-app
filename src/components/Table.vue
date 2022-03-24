@@ -16,22 +16,23 @@
             <input
               type="text"
               class="form-control"
-              required
               id="txtLat"
               placeholder="Enter lat. Ex: 9.567941"
-              v-model="coordinate.lat"
+              v-model="coordinate.lat" 
             />
+            
+            <span class="text-danger">{{error.lat}}</span>
           </div>
           <div class="form-group col-12 col-sm-6 col-md-6 col-lg-3 long-input">
             <label htmlFor="txtLong">Long</label>
             <input
               type="text"
               class="form-control"
-              required
               id="txtLong"
               placeholder="Enter long. Ex: 105.7459"
               v-model="coordinate.long"
             />
+            <span class="text-danger">{{error.long}}</span>
           </div>
           <button class="btnAddCoor" @click="addToArray()">
             Add coordinate
@@ -49,14 +50,15 @@
             <tbody>
               <tr v-for="coor in coordinates" :key="coor.id">
                 <td>
-                  
-                  <input type="text" v-model="coor.lat"/>
+                  <input type="text" v-model="coor.lat" />
                 </td>
                 <td>
-                  <input type="text" v-model="coor.long"/>
+                  <input type="text" v-model="coor.long" />
                 </td>
                 <td>
-                  <span @click="deleteOneRow(coor.id)" style="cursor: pointer">X</span>
+                  <span @click="deleteOneRow(coor.id)" style="cursor: pointer"
+                    >X</span
+                  >
                 </td>
               </tr>
             </tbody>
@@ -64,9 +66,9 @@
         </div>
       </div>
     </div>
-    <button class="btnAddCoor" @click="log()">
+    <!-- <button class="btnAddCoor" @click="log()">
             Log
-          </button>
+          </button> -->
   </div>
 </template>
 
@@ -76,6 +78,10 @@ export default {
   data() {
     return {
       //   length: 1,
+      error:{
+        lat:'',
+        long: ''
+      },
       coordinate: {
         id: 0,
         lat: "",
@@ -85,30 +91,48 @@ export default {
     };
   },
   methods: {
-    // addOneMoreRow() {
-    //   this.length++;
-    // },
-    addToArray() {
-      //   console.log(this.coordinate);
-      this.coordinate.id++;
-      const arr = [...this.coordinates];
-      arr[this.coordinates.length] = Object.assign({}, this.coordinate);
-      //   console.log(arr);
-      this.coordinates = arr;
-      //   console.log(this.coordinates);
-      this.coordinate.lat = "";
-      this.coordinate.long = "";
+    addToArray() { 
+      this.error={
+        lat:'',
+        long: ''
+      }
+      if (this.coordinate.lat === "" ) {
+        this.error.lat = 'Lat is required ';
+      }
+      if(this.coordinate.long === ""){
+        this.error.long ='Long is required ';
+      }
+      if(this.coordinate.lat !== "" && !this.coordinate.lat.match(/^\d*[.]{1}\d*$/)){
+        this.error.lat="Must be Only accept the number and dot (.) character.";
+      }
+      if(this.coordinate.long !== "" && !this.coordinate.long.match(/^\d*[.]{1}\d*$/)){
+        this.error.long="Must be Only accept the number and dot (.) character.";
+      }
+      else if(
+        (this.coordinate.lat !== "" && this.coordinate.lat.match(/^\d*[.]{1}\d*$/)) &&
+        (this.coordinate.long !== "" && this.coordinate.long.match(/^\d*[.]{1}\d*$/))
+      ){
+        //   console.log(this.coordinate);
+        this.coordinate.id++;
+        const arr = [...this.coordinates];
+        arr[this.coordinates.length] = Object.assign({}, this.coordinate);
+        //   console.log(arr);
+        this.coordinates = arr;
+        //   console.log(this.coordinates);
+        this.coordinate.lat = "";
+        this.coordinate.long = "";
+      }
     },
 
     deleteOneRow(index) {
       let arr = [...this.coordinates];
-      arr = arr.filter(coordinate => coordinate.id !== index)
-      this.coordinates=arr
+      arr = arr.filter((coordinate) => coordinate.id !== index);
+      this.coordinates = arr;
     },
 
-    log(){
-        console.log(this.coordinates);
-    }
+    log() {
+      console.log(this.coordinates);
+    },
   },
 };
 </script>
@@ -205,16 +229,16 @@ export default {
   width: 20%;
 }
 
-.table__coordinate input{
-    color: #fff;
+.table__coordinate input {
+  color: #fff;
   background-color: transparent;
   border: none;
   text-align: center;
 }
 
-.table__coordinate input:focus{
-    border: none;
-    outline: none;
+.table__coordinate input:focus {
+  border: none;
+  outline: none;
 }
 
 .lat-input,
